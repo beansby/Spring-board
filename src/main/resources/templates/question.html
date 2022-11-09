@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>질문 상세</title>
+</head>
+<body>
+<form method="post">
+    <h2 th:text="${question.title}"></h2>
+    <hr>
+    <p th:text="${question.content}"></p>
+    <p th:text="${question.date}"></p>
+    <input type="button" value="추천">
+    <input type="submit" value="수정" th:formaction="@{/questionUpdate}">
+    <input type="submit" value="삭제" th:formaction="@{/questionDelete}">
+</form>
+
+
+<form method="post">
+    <h2> 개의 답변이 있습니다. </h2>
+    <hr>
+<!--    <p th:text="${answer.answer}"></p>
+    <p th:text="${answer.date}"></p>-->
+    <input type="button" value="추천">
+    <input type="submit" value="수정" th:formaction="@{/questionUpdate}">
+    <input type="submit" value="삭제" th:formaction="@{/questionDelete}">
+</form>
+
+<form action="/question/{id}" method="post">
+    <p><textarea name="answer" id="" cols="30" rows="10"></textarea></p>
+    <p><input type="submit" value="답변등록"></p>
+
+</form>
+
+
+
+</body>
+</html>

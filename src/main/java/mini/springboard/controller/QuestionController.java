@@ -27,7 +27,7 @@ public class QuestionController {
     }
 
     /**
-     * 질문 목록
+     * 질문 목록, 전체 조회
      * @param model
      * @return
      */
