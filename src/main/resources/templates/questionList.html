@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security/">
+<head>
+    <meta charset="UTF-8">
+    <title>Question List</title>
+</head>
+<body>
+    <h2>Question List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th> 제목  </th>
+                <th> 작성일자 </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="question : ${questionList}">
+                <td th:text="${question.title}"></td>
+                <td th:text="${question.date}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
