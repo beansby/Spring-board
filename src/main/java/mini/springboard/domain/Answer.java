@@ -13,14 +13,15 @@ import java.time.LocalDateTime;
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Question question;
+    private Integer id;
 
     @Column(columnDefinition = "TEXT")
     private String answer;
 
     @CreatedDate
     private LocalDateTime date;
+
+    @ManyToOne
+    private Question question;
+
 }
