@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -65,9 +66,10 @@ public class QuestionController {
         Question question = new Question();
         question.setTitle(form.getTitle());
         question.setContent(form.getContent());
+        question.setDate(LocalDateTime.now());
         questionService.questionSave(question);
         System.out.println("질문 등록 완료");
-        return "redirect:/questionList";
+        return "redirect:/questionlist";
     }
 
     /**
