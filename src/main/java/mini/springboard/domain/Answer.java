@@ -1,5 +1,6 @@
 package mini.springboard.domain;
 
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,12 +17,15 @@ public class Answer {
     private Integer id;
 
     @Column(columnDefinition = "TEXT")
+    @NotNull
     private String answer;
 
     @CreatedDate
     private LocalDateTime date;
 
     @ManyToOne
-    private Question question;
+    private Question idx;
 
+    @ManyToOne
+    private Member user_id;
 }

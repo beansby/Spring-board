@@ -1,5 +1,6 @@
 package mini.springboard.domain;
 
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,17 +14,22 @@ import java.util.List;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer idx;
 
     @Column(length = 200)
+    @NotNull
     private String title;
 
     @Column(columnDefinition = "TEXT")
+    @NotNull
     private String content;
 
     private LocalDateTime date;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "idx", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
-}
 
+    @ManyToOne
+    @NotNull
+    private Member user_id;
+}
