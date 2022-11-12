@@ -14,16 +14,14 @@ import java.util.List;
 @Setter
 @Entity
 public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull @Column(length = 30, unique = true)
     private String user_id;
 
-    @Column
-    @NotNull
-    private Integer password;
+    @Column @NotNull
+    private String password;
 
-    @NotNull
+    @Column @NotNull
     private String email;
 
     @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)

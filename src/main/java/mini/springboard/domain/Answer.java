@@ -24,8 +24,10 @@ public class Answer {
     private LocalDateTime date;
 
     @ManyToOne
+    @JoinColumn(name="idx")
     private Question idx;
 
     @ManyToOne
+    @JoinColumn(name="user_id")
     private Member user_id;
 }

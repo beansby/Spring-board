@@ -12,8 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idx;
 
     @Column(length = 200)
@@ -26,10 +25,10 @@ public class Question {
 
     private LocalDateTime date;
 
-    @OneToMany(mappedBy = "idx", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 
-    @ManyToOne
-    @NotNull
+    @ManyToOne @NotNull
+    @JoinColumn(name="user_id")
     private Member user_id;
 }
