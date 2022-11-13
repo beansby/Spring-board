@@ -23,11 +23,13 @@ public class Answer {
     @CreatedDate
     private LocalDateTime date;
 
+    private LocalDateTime dateModify;
+
     @ManyToOne
     @JoinColumn(name="idx")
-    private Question idx;
+    private Question question;
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    private Member user_id;
+    private Member member;
 }
