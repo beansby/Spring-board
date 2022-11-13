@@ -15,19 +15,21 @@ import java.util.List;
 @Entity
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull @Column(length = 30, unique = true)
-    private String user_id;
+    private Long user_id;
+
+    @Column(length = 30, unique = true) @NotNull
+    private String username;
 
     @Column @NotNull
     private String password;
 
-    @Column @NotNull
+    @Column(unique = true) @NotNull
     private String email;
 
     @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)
     private List<Question> questionList;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 }
 

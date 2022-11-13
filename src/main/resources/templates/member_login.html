@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<body>
+    <h3>회원가입</h3>
+    <hr>
+    <form th:action="@{/member/login}" method="post">
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                사용자 ID 또는 비밀번호를 확인해 주세요.
+            </div>
+        </div>
+
+        <p>
+            <label>사용자ID <br>
+                <input type="text" name="username" id="username"></label>
+        </p>
+        <p>
+            <label>비밀번호 <br>
+                <input type="text" name="password" id="password"></label>
+        </p>
+
+        <button type="submit">로그인</button>
+
+    </form>
+</body>
+</html>
