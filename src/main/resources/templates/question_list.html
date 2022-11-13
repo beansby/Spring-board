@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security/">
+<head>
+    <meta charset="UTF-8">
+    <title>Question List</title>
+</head>
+<body>
+
+        <div class="container">
+            <a href="/"> Home </a>
+            <div>
+                <ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@{/member/login}" sec:authorize="isAnonymous()"> 로그인 </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@{/member/logout}" sec:authorize="isAuthenticated()"> 로그아웃 </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/member/signup}"> 회원가입 </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    <h2>Question List</h2>
+    <table>
+        <p>
+            <input type="button" value="질문 등록하기" th:href="@{/question/write}">
+            <input type="text"><input type="button" value="찾기">
+        </p>
+
+        <thead>
+            <tr>
+                <th> 번호 </th>
+                <th> 제목  </th>
+                <th> 글쓴이 </th>
+                <th> 작성일자 </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="question : ${questionList}">
+                <td th:text="${question.id}"></td>
+                <td><a th:href="@{/question/detail/{id}(id=${question.id})}" th:text="${question.title}"></a></td>
+<!--                <td th:text="${question.}"></td>-->
+                <td th:text="${question.date}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
