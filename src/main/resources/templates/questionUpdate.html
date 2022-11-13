@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>질문 수정</title>
+</head>
+<body>
+  <form method="post">
+    <h3>질문등록</h3>
+    <hr>
+    <p>
+      제목<br><input type="text" name="title" maxlength="200" th:value="${question.title}">
+    </p>
+    <p>
+      내용<br><textarea name="content" cols="30" rows="10" th:value="${question.content}"></textarea>
+    </p>
+    <p><input type="submit" value="저장하기" th:formaction="|@{/question/update/{id}}|"></p>
+  </form>
+
+</body>
+</html>

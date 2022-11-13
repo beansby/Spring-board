@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security/">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security/" xmlns:layout="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+
+
 <head>
     <meta charset="UTF-8">
     <title>Question List</title>
 </head>
+
 <body>
 
         <div class="container">
-            <a href="/"> Home </a>
+            <a href="/question/list"> Home </a>
             <div>
                 <ul>
                     <li class="nav-item">
-                        <a class="nav-link" href="@{/member/login}" sec:authorize="isAnonymous()"> 로그인 </a>
+                        <a class="nav-link" th:href="@{/member/login}" sec:authorize="isAnonymous()"> 로그인 </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@{/member/logout}" sec:authorize="isAuthenticated()"> 로그아웃 </a>
+                        <a class="nav-link" th:href="@{/member/logout}" sec:authorize="isAuthenticated()"> 로그아웃 </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/member/signup}"> 회원가입 </a>
@@ -26,28 +30,35 @@
 
 
     <h2>Question List</h2>
-    <table>
-        <p>
-            <input type="button" value="질문 등록하기" th:href="@{/question/write}">
-            <input type="text"><input type="button" value="찾기">
-        </p>
+    <div layout:fragment="content" class="container my-3">
+        <table class="table">
+            <p>
+                <a th:href="@{/question/write}"> 질문 등록하기 </a>
+                <input type="text"><input type="button" value="찾기">
+            </p>
 
-        <thead>
-            <tr>
-                <th> 번호 </th>
-                <th> 제목  </th>
-                <th> 글쓴이 </th>
-                <th> 작성일자 </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="question : ${questionList}">
-                <td th:text="${question.id}"></td>
-                <td><a th:href="@{/question/detail/{id}(id=${question.id})}" th:text="${question.title}"></a></td>
-<!--                <td th:text="${question.}"></td>-->
-                <td th:text="${question.date}"></td>
-            </tr>
-        </tbody>
-    </table>
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th> 번호 </th>
+                    <th style="width:50%"> 제목  </th>
+                    <th> 글쓴이 </th>
+                    <th> 작성일자 </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr class="text-center" th:each="question, idx : ${questionList}">
+
+                    <td th:text="${question.idx}"></td>
+                    <td><a th:href="@{/question/detail/{idx}(idx=${question.idx})}" th:text="${question.title}"></a></td>
+                    <td>
+                        <span th:if="${question.user_id != null}" th:text="${question.user_id.username}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(question.date, 'yyyy-MM-dd HH:mm')}"></td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

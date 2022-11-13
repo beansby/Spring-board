@@ -1,37 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" xmlns:sec="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+
 <head>
     <meta charset="UTF-8">
     <title>질문 상세</title>
 </head>
 <body>
-<form method="post">
-    <h2 th:text="${question.title}"></h2>
-    <hr>
-    <p th:text="${question.content}"></p>
-    <p th:text="${question.date}"></p>
-    <input type="button" value="추천">
-    <input type="submit" value="수정" th:formaction="@{/questionUpdate}">
-    <input type="submit" value="삭제" th:formaction="@{/questionDelete}">
-</form>
+<div class="container my-3">
+    <!--질문내용-->
+    <form method="post">
+        <h2 th:text="${question.title}" class="border-bottom py-2"></h2>
 
+        <div class="card my-3">
+            <div class="card-body">
+                <div class="card-text" style="white-space: pre-line;" th:text="${question.content}">
+                </div>
 
-<form method="post">
-    <h2> 개의 답변이 있습니다. </h2>
-    <hr>
-<!--    <p th:text="${answer.answer}"></p>
-    <p th:text="${answer.date}"></p>-->
-    <input type="button" value="추천">
-    <input type="submit" value="수정" th:formaction="@{/questionUpdate}">
-    <input type="submit" value="삭제" th:formaction="@{/questionDelete}">
-</form>
+                <div class="d-flex justify-content-end">
+                    <div class="badge bg-light text-dark p-2 text-start">
+                        <span th:if="${question.user_id != null}" th:text="${question.user_id.username}"></span>
+                        <div th:text="${#temporals.format(question.date, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                </div>
 
-<form action="/question/{id}" method="post">
-    <p><textarea name="answer" id="" cols="30" rows="10"></textarea></p>
-    <p><input type="submit" value="답변등록"></p>
+                <!--질문 추천, 수정, 삭제 버튼-->
+                <div>
+                    <input type="button" value="추천">
+                    <a th:href="@{|question/update/${question.idx|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                       th:if="${question.user_id != null and #authentication.getPrincipal().getUsername() == question.user_id.username}" th:text="수정">
+                    </a>
+                    <input type="submit" value="삭제" th:formaction="@{/question/delete}">
+                </div>
 
-</form>
+            </div>
+        </div>
+    </form>
 
+    <!--답변갯수-->
+    <h5 th:text="|${#lists.size(question.answerList)} 개의 답변이 있습니다.|" class="border-bottom my-3 py-2"> </h5>
+
+    <!--답변내용-->
+    <div>
+        <!--답변 목록 전체-->
+        <div th:each="answer : ${question.answerList}" class="card my-3">
+            <!--답변 내용-->
+            <div class="card-body">
+                <div class="card-text" th:text="${answer.answer}" style="white-space: pre-line;">
+                </div>
+                <!--답변 내용별 작성자, 시각-->
+                <div class="d-flex justify-content-end">
+                    <div class="badge bg-light text-dark p-2 text-start">
+                        <span th:if="${answer.member != null}" th:text="${answer.member.username}"></span>
+                        <div th:text="${#temporals.format(answer.date, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                </div>
+
+                <!--답변 추천, 수정, 삭제 버튼-->
+                <div>
+                    <a th:href="@{|answer/update/${answer.id}|}" class="btn btn-sm btn-outline-secondary"
+                       sec:authorize="isAuthenticated()" th:if="${answer.member != null and #authentication.getPrincipal().getUsername() == answer.member.username}"
+                       th:text="수정">
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--답변 등록창-->
+    <form th:action="@{|/answer/write/${question.idx}|}" th:object="${answerForm}" method="post" class="my-3">
+    <!--    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">-->
+    <!--        <div th:each="err:${#fields.allErrors()}" th:text="${err}"/>-->
+    <!--    </div>-->
+
+        <textarea th:field="*{answer}" sec:authorize="isAnonymous()" disabled rows="15" id="answer" class="form-control"></textarea>
+        <textarea th:field="*{answer}" sec:authorize="isAuthenticated()" rows="15" id="answer" class="form-control"></textarea>
+        <p><input type="submit" value="답변등록" class="btn btn-primary my-2"></p>
+    </form>
+</div>
 
 
 </body>

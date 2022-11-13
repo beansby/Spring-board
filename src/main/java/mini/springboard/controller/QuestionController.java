@@ -1,21 +1,27 @@
 package mini.springboard.controller;
 
+import mini.springboard.domain.Member;
 import mini.springboard.domain.Question;
+import mini.springboard.service.MemberService;
 import mini.springboard.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
+
 
 @Controller
 public class QuestionController {
 
     private QuestionService questionService;
+    private MemberService memberService;
 
     public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
@@ -24,7 +30,7 @@ public class QuestionController {
 
     @GetMapping("/")
     public String home(){
-        return "home";
+        return "question_list";
     }
 
     /**
@@ -32,22 +38,22 @@ public class QuestionController {
      * @param model
      * @return
      */
-    @GetMapping ("/questionlist")
+    @GetMapping ("/question/list")
     public String questionList(Model model){
-        List<Question> questionList = questionService.findAllQuestions();
+        List<Question> questionList = this.questionService.AllquetionsFind();
         model.addAttribute("questionList", questionList);
-        return "questionList";
+        return "question_list";
     }
 
     /**
      * 질문별 화면
      * @param model
-     * @param id
+     * @param idx
      * @return
      */
-    @GetMapping("/question/{id}")
-    public String question(Model model, @PathVariable("id") Integer id){
-        Question question = questionService.question(id);
+    @GetMapping("/question/detail/{idx}")
+    public String questionDetail(Model model, @PathVariable("idx") Integer idx, AnswerForm answerForm){
+        Question question = this.questionService.questionFind(idx);
         model.addAttribute("question", question);
         return "question";
     }
@@ -56,47 +62,67 @@ public class QuestionController {
      * 질문 작성
      * @return
      */
-    @GetMapping ("/questionwrite")
-    public String questionWrite(){
-        return "questionWrite";
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping ("/question/write")
+    public String questionWrite(QuestionForm questionForm){
+        return "question_write";
     }
-
-    @PostMapping ("/questionwrite")
-    public String questionPost (QuestionForm form, Model model){
-        Question question = new Question();
-        question.setTitle(form.getTitle());
-        question.setContent(form.getContent());
-        question.setDate(LocalDateTime.now());
-        questionService.questionSave(question);
-        System.out.println("질문 등록 완료");
-        return "redirect:/questionlist";
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping ("/question/write")
+    public String questionWrite (@Valid QuestionForm questionForm, BindingResult bindingResult, Principal principal){
+        if (bindingResult.hasErrors()){
+            return "question_write";
+        }
+        Member member = this.memberService.getMember(principal.getName());
+        this.questionService.questionSave(questionForm.getTitle(),questionForm.getContent(), member);
+        return "redirect:/question/list";
     }
 
     /**
      * 질문 수정
-     * @param form
-     * @param model
+     * @param questionForm
+     * @param idx
+     * @param principal
      * @return
      */
-    @PostMapping ("/questionUpdate")
-    public String questionUpdate(QuestionForm form, Model model){
-        Question question = questionService.question(form.getId());
-        question.setTitle(form.getTitle());
-        question.setContent(form.getContent());
-        return "redirect:/questionList";
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping ("/question/update/{idx}")
+    public String questionUpdate(QuestionForm questionForm, @PathVariable("idx") Integer idx, Principal principal){
+        Question question = this.questionService.questionFind(idx);
+        if(!question.getUser_id().getUsername().equals(principal.getName())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        questionForm.setTitle(question.getTitle());
+        questionForm.setContent(question.getContent());
+        return "question_write";
+    }
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping ("/question/update/{idx}")
+    public String questionUpdate(@Valid QuestionForm questionForm, BindingResult bindingResult, Principal principal, @PathVariable("idx") Integer idx){
+        if(bindingResult.hasErrors()){
+            return "question_write";
+        }
+        Question question = this.questionService.questionFind(idx);
+        if (!question.getUser_id().getUsername().equals(principal.getName())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        this.questionService.questionUpdate(question, questionForm.getTitle(), questionForm.getContent());
+        return String.format("redirect:/question/detail/%s, idx");
     }
 
-    /**
-     * 질문 삭제
-     * @param id
-     * @param model
-     * @return
-     */
-    @PostMapping ("/questionDelete")
-    public String questionDelete(Integer id, Model model){
-        questionService.questionDelete(id);
-        return "redirect:/questionList";
-    }
+
+//
+//    /**
+//     * 질문 삭제
+//     * @param id
+//     * @param model
+//     * @return
+//     */
+//    @PostMapping ("/question/delete")
+//    public String questionDelete(Integer id, Model model){
+//        questionService.questionDelete(id);
+//        return "redirect:/question/list";
+//    }
 
 
 }
